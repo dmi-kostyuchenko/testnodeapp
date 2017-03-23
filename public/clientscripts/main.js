@@ -1,7 +1,7 @@
 ﻿$(function () {
-    var ioUrl = '//' + window.location.hostname + ':' + window.ioport;
+    var ioUrl = '//' + window.location.hostname + (window.location.hostname === 'localhost' ? (':' + window.ioport) : '');
 
-    loadJavascript(ioUrl + '/socket.io/socket.io.js', function () {
+    loadJavascript('/socket.io/socket.io.js', function () {
         var socket = io.connect(ioUrl);
 
         socket.on('history', function (data) {
