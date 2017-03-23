@@ -1,9 +1,15 @@
 {
-  "name": "simple-recorder",
+  "name": "nodejs-test-web-app",
   "version": "0.0.0",
-  "description": "SimpleRecorder",
+  "description": "NodejsTestWebApp",
   "main": "server.js",
   "author": {
     "name": "Dmitriy"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.3",
+    "express": "^4.15.2",
+    "socket.io": "^1.7.3",
+    "uuid": "^3.0.1"
   }
 }
