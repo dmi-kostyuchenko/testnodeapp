@@ -1,7 +1,7 @@
 ﻿$(function () {
     var ioUrl = '//' + window.location.hostname + ':' + window.ioport;
 
-    $.getScript(ioUrl + '/socket.io/socket.io.js', function () {
+    loadJavascript(ioUrl + '/socket.io/socket.io.js', function () {
         var socket = io.connect(ioUrl);
 
         socket.on('history', function (data) {
@@ -60,4 +60,20 @@ function getCookie(name) {
         "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
     ));
     return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
+function loadJavascript(src, callback) {
+    var script = document.createElement('script'),
+        loaded;
+    script.setAttribute('src', src);
+    if (callback) {
+        script.onreadystatechange = script.onload = function () {
+            if (!loaded) {
+                callback();
+            }
+            loaded = true;
+        };
+    }
+    document.getElementsByTagName('head')[0].appendChild(script);
+    return $(script);
 }
