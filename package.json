@@ -1,0 +1,9 @@
+{
+  "name": "simple-recorder",
+  "version": "0.0.0",
+  "description": "SimpleRecorder",
+  "main": "server.js",
+  "author": {
+    "name": "Dmitriy"
+  }
+}
