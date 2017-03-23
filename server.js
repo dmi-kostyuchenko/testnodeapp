@@ -1,17 +1,16 @@
 'use strict';
 
 var express = require('express');
-var http = require('http');
 //var io = require('socket.io');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 
+var app = express();
 
-let chatService = require('./services/chatProcessingService')();
+let chatService = require('./services/chatProcessingService')(app);
 
 var port = process.env.PORT || 1337;
 
-var app = express();
 //var ioapp = io.listen(8080);
 
 app.use(cookieParser());
@@ -25,9 +24,6 @@ app.route('/')
 
         res.sendFile(path.join(__dirname + '/views/home.html'));
     });
-
-app.listen(port);
-
 //var history = [];
 
 //ioapp.sockets.on('connection', function (socket) {

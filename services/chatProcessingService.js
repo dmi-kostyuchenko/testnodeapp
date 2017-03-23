@@ -7,9 +7,12 @@
     history: [],
     users: [],
 
-    init: function () {
-        const io = require('socket.io');
-        this.ioapp = io.listen(8080);
+    init: function (app) {
+        var server = require('http').createServer(app);
+        this.ioapp = require('socket.io')(server);
+
+        let port = process.env.PORT || 1337;
+        server.listen(port);
 
         this.uuidV4 = require('uuid/v4');
 
@@ -102,8 +105,8 @@
     }
 };
 
-module.exports = function () {
-    private.init();
+module.exports = function (app) {
+    private.init(app);
 
     return {
         identifyUser: private.identifyUser,
