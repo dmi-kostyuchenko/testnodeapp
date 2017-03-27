@@ -160,7 +160,7 @@ function remoteOfferReceived(id, data) {
     
 }
 function createConnection(id) {
-    if (peers[id] === undefined) {
+    if (!peers[id]) {
         peers[id] = {
             candidateCache: []
         };
@@ -173,7 +173,13 @@ function createConnection(id) {
 
 function remoteAnswerReceived(id, data) {
     var pc = peers[id].connection;
-    pc.setRemoteDescription(new SessionDescription(data));
+    pc.setRemoteDescription(new SessionDescription(data), function () {
+        console.log('remote description on answer set');
+        console.log(data);
+    },
+    function () {
+        console.log(err);
+    });
 }
 
 function remoteCandidateReceived(id, data) {
