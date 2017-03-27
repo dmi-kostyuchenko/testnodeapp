@@ -3,9 +3,9 @@ var message = document.getElementById("message");
 var connection_num = document.getElementById("connection_num");
 var room_link = document.getElementById("room_link");
 
-var PeerConnection = window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
-var SessionDescription = window.mozRTCSessionDescription || window.RTCSessionDescription;
-var IceCandidate = window.mozRTCIceCandidate || window.RTCIceCandidate;
+var PeerConnection = window.RTCPeerConnection;
+var SessionDescription = window.RTCSessionDescription;
+var IceCandidate = window.RTCIceCandidate;
 
 function uuid() {
     var s4 = function () {
@@ -38,10 +38,13 @@ function sendViaSocket(type, message, to) {
 var server = {
     iceServers: [
         { url: "stun:stun.l.google.com:19302" },
-        { url: "stun:23.21.150.121" },
+        { url: "stun:stun1.l.google.com:19302" },
+        { url: "stun:2stun.services.mozilla.com" },
+        { url: "stun:stun.voipstunt.com" },
         { url: "turn:numb.viagenie.ca", credential: "awdrgyjilp", username: "mquewmor@sharklasers.com" }
     ]
 };
+
 var options = {
     optional: [
         { DtlsSrtpKeyAgreement: true }, // ????????? ??? ?????????? ????? Chrome ? Firefox
@@ -75,6 +78,9 @@ function socketNewPeer(data) {
     // ??????? SDP offer
     pc.createOffer(function (offer) {
         pc.setLocalDescription(offer);
+    },
+    function (err) {
+        console.log(err);
     });
 }
 
@@ -82,7 +88,7 @@ function initConnection(pc, id, sdpType) {
     console.log('init connection called');
 
     pc.onicecandidate = function (event) {
-        alert(1);
+        console.log('onicecandidate');
         if (event.candidate) {
             // ??? ??????????? ?????? ICE ????????? ????????? ??? ? ?????? ??? ?????????? ????????
             peers[id].candidateCache.push(event.candidate);
@@ -97,7 +103,7 @@ function initConnection(pc, id, sdpType) {
         }
     }
     pc.oniceconnectionstatechange = function (event) {
-        alert(2);
+        console.log('oniceconnectionstatechange');
         if (pc.iceConnectionState === "disconnected") {
             connection_num.innerText = parseInt(connection_num.innerText) - 1;
             delete peers[id];
@@ -132,10 +138,17 @@ function remoteOfferReceived(id, data) {
     createConnection(id);
     var pc = peers[id].connection;
 
-    pc.setRemoteDescription(new SessionDescription(data));
-    pc.createAnswer(function (answer) {
-        pc.setLocalDescription(answer);
+    pc.setRemoteDescription(new SessionDescription(data), function () {
+        pc.createAnswer(function (answer) {
+            pc.setLocalDescription(answer);
+        },
+        function (err) {
+            console.log(err);
+        });
+    }, function (err) {
+        console.log(err);
     });
+    
 }
 function createConnection(id) {
     if (peers[id] === undefined) {
