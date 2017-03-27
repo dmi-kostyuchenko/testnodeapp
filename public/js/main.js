@@ -32,6 +32,7 @@ socket.emit("room", { id: ME, room: ROOM });
 
 // ??????????????? ??????? ??? ???????? ???????? ?????????, ????????? ? WebRTC
 function sendViaSocket(type, message, to) {
+    console.log(message.sdp);
     socket.emit("webrtc", { id: ME, to: to, type: type, data: message });
 }
 
@@ -67,12 +68,10 @@ function socketNewPeer(data) {
     // ????????? ???? ? ?????? ?????
     peers[data].connection = pc;
 
-    // ??????? DataChannel ?? ???????? ? ????? ??????????? ????? ???????????
     var channel = pc.createDataChannel("mychannel", {});
     channel.owner = data;
     peers[data].channel = channel;
 
-    // ????????????? ??????????? ??????? ??????
     bindEvents(channel);
 
     // ??????? SDP offer
@@ -89,6 +88,7 @@ function initConnection(pc, id, sdpType) {
 
     pc.onicecandidate = function (event) {
         console.log('onicecandidate');
+        console.log(event.candidate);
         if (event.candidate) {
             // ??? ??????????? ?????? ICE ????????? ????????? ??? ? ?????? ??? ?????????? ????????
             peers[id].candidateCache.push(event.candidate);
@@ -103,11 +103,17 @@ function initConnection(pc, id, sdpType) {
         }
     }
     pc.oniceconnectionstatechange = function (event) {
-        console.log('oniceconnectionstatechange');
+        console.log('ice candidate state cnage');
+        console.log(pc.iceConnectionState);
         if (pc.iceConnectionState === "disconnected") {
             connection_num.innerText = parseInt(connection_num.innerText) - 1;
             delete peers[id];
         }
+    }
+    pc.ondatachannel = function (e) {
+        peers[id].channel = e.channel;
+        peers[id].channel.owner = id;
+        bindEvents(peers[id].channel);
     }
 }
 
@@ -121,6 +127,7 @@ function bindEvents(channel) {
 }
 
 function socketReceived(json) {
+    console.log(json.data.sdp);
     switch (json.type) {
         case "candidate":
             remoteCandidateReceived(json.id, json.data);
@@ -140,6 +147,8 @@ function remoteOfferReceived(id, data) {
 
     pc.setRemoteDescription(new SessionDescription(data), function () {
         pc.createAnswer(function (answer) {
+            console.log('remote description set');
+            console.log(answer);
             pc.setLocalDescription(answer);
         },
         function (err) {
@@ -159,11 +168,6 @@ function createConnection(id) {
         initConnection(pc, id, "answer");
 
         peers[id].connection = pc;
-        pc.ondatachannel = function (e) {
-            peers[id].channel = e.channel;
-            peers[id].channel.owner = id;
-            bindEvents(peers[id].channel);
-        }
     }
 }
 
