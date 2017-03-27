@@ -1,0 +1,19 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Home</title>
+
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    
+</head>
+<body>
+    <div>Connected to <span id="connection_num">0</span> peers</div>
+    <div><textarea id="message"></textarea><br /><button onclick="sendMessage();">Send</button></div>
+    <div id="room_link"></div>
+    <div id="chatlog"></div>
+
+    <script type="text/javascript" src="/js/main.js"></script>
+</body>
+</html>

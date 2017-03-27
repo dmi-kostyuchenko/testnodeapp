@@ -1,14 +1,16 @@
 {
-  "name": "nodejs-test-web-app",
+  "name": "simple-vchat",
   "version": "0.0.0",
-  "description": "NodejsTestWebApp",
+  "description": "SimpleVChat",
   "main": "server.js",
   "author": {
     "name": "Dmitriy"
   },
   "dependencies": {
+    "bluebird": "^3.5.0",
     "cookie-parser": "^1.4.3",
     "express": "^4.15.2",
+    "mustache": "^2.3.0",
     "socket.io": "^1.7.3",
     "uuid": "^3.0.1"
   }
